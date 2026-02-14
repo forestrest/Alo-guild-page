@@ -1,7 +1,7 @@
 import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_Dto7fIJ9.mjs';
 import 'piccolore';
-import { $ as $$Layout } from '../chunks/Layout_CYDZf8TF.mjs';
-import { p as pool } from '../chunks/connection_DYy2Rla8.mjs';
+import { $ as $$Layout } from '../chunks/Layout_ccV0Ncx2.mjs';
+import { p as pool } from '../chunks/connection_BNiGHa6Z.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$Auditoria = createComponent(async ($$result, $$props, $$slots) => {

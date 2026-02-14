@@ -1,7 +1,7 @@
 import { e as createComponent, m as maybeRenderHead, r as renderTemplate, h as createAstro } from '../chunks/astro/server_Dto7fIJ9.mjs';
 import 'piccolore';
 import 'clsx';
-import { p as pool } from '../chunks/connection_DYy2Rla8.mjs';
+import { p as pool } from '../chunks/connection_BNiGHa6Z.mjs';
 /* empty css                                     */
 export { renderers } from '../renderers.mjs';
 

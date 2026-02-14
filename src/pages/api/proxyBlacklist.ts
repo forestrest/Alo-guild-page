@@ -1,15 +1,19 @@
-// src/pages/api/proxyBlacklist.ts
 export async function post({ request }) {
-  const body = await request.formData();
+  const json = await request.json();
+
+  // Convertir JSON a FormData para enviar a Railway
+  const formData = new FormData();
+  for (const key in json) {
+    formData.append(key, json[key]);
+  }
 
   const res = await fetch("https://alo-guild-page-production.up.railway.app/api/blacklist", {
     method: "POST",
-    body
+    body: formData
   });
 
   const data = await res.json();
 
-  // Retornar datos al cliente, incluyendo el ID generado
   return new Response(JSON.stringify(data), {
     status: res.status,
     headers: { "Content-Type": "application/json" }

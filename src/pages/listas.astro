@@ -4,19 +4,12 @@ const admin = Astro.cookies.get("admin");
 
 import { pool } from "../db/connection";
 
-// 🔎 Query segura para listar blacklist
 const [rows]: any[] = await pool.execute(`
-  SELECT 
-    id,
-    nick_albion,
-    nick_discord,
-    razon,
-    created_at
+  SELECT id, nick_albion, nick_discord, razon, created_at
   FROM blacklist
   ORDER BY created_at DESC
 `);
 
-// 🔒 Redirigir si no hay admin
 if (!admin) {
   return Astro.redirect("/");
 }
@@ -31,11 +24,11 @@ if (!admin) {
     <div class="modal-content">
       <h2>Registro en Blacklist</h2>
 
-      <form id="blacklistForm">
+      <!-- Aquí el form hace POST directo al endpoint Astro -->
+      <form action="/api/proxyBlacklist" method="POST" id="blacklistForm">
         <input type="text" name="nickAlbion" placeholder="Nick Albion" required maxlength="30" />
         <input type="text" name="nickDiscord" placeholder="Nick Discord (Opcional)" maxlength="30" />
         <input type="text" name="razon" placeholder="Razón" required maxlength="500" />
-
         <button type="submit" class="btn-registrar">Registrar</button>
         <button type="button" id="cerrarModal" class="btn-cancel">Cancelar</button>
       </form>
@@ -44,6 +37,7 @@ if (!admin) {
     </div>
   </div>
 
+  <!-- Tabla de registros -->
   <div class="dashboard-container">
     <h1 class="titulo">Blacklist Registrados</h1>
     <div class="tabla-container">
@@ -57,8 +51,8 @@ if (!admin) {
             <th>Fecha</th>
           </tr>
         </thead>
-        <tbody id="tablaBlacklist">
-          {rows.map((row) => (
+        <tbody>
+          {rows.map(row => (
             <tr>
               <td>{row.id}</td>
               <td>{row.nick_albion}</td>
@@ -89,13 +83,16 @@ if (!admin) {
     mensaje.textContent = "";
     form.querySelector("button[type=submit]").disabled = true;
 
+    // Convertir formulario a JSON
     const formData = new FormData(form);
+    const jsonData = Object.fromEntries(formData.entries());
 
     try {
       // 🔗 Petición al proxy server-side en Astro
       const res = await fetch("/api/proxyBlacklist", {
         method: "POST",
-        body: formData
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(jsonData)
       });
 
       const data = await res.json();
@@ -131,6 +128,7 @@ if (!admin) {
     }
   });
 </script>
+
 
 
 

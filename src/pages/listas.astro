@@ -16,19 +16,17 @@ if (!admin) {
 ---
 
 <Layout title="Listar">
-  <button id="abrirModal" class="btn-medieval">
-    Añadir a Blacklist
-  </button>
+  <button id="abrirModal" class="btn-medieval">Añadir a Blacklist</button>
 
   <div id="modalBlacklist" class="modal">
     <div class="modal-content">
       <h2>Registro en Blacklist</h2>
 
-      <!-- Aquí el form hace POST directo al endpoint Astro -->
-      <form action="/api/proxyBlacklist" method="POST" id="blacklistForm">
+      <form id="blacklistForm">
         <input type="text" name="nickAlbion" placeholder="Nick Albion" required maxlength="30" />
         <input type="text" name="nickDiscord" placeholder="Nick Discord (Opcional)" maxlength="30" />
         <input type="text" name="razon" placeholder="Razón" required maxlength="500" />
+
         <button type="submit" class="btn-registrar">Registrar</button>
         <button type="button" id="cerrarModal" class="btn-cancel">Cancelar</button>
       </form>
@@ -37,7 +35,6 @@ if (!admin) {
     </div>
   </div>
 
-  <!-- Tabla de registros -->
   <div class="dashboard-container">
     <h1 class="titulo">Blacklist Registrados</h1>
     <div class="tabla-container">
@@ -51,7 +48,7 @@ if (!admin) {
             <th>Fecha</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tablaBlacklist">
           {rows.map(row => (
             <tr>
               <td>{row.id}</td>
@@ -88,7 +85,6 @@ if (!admin) {
     const jsonData = Object.fromEntries(formData.entries());
 
     try {
-      // 🔗 Petición al proxy server-side en Astro
       const res = await fetch("/api/proxyBlacklist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -128,6 +124,7 @@ if (!admin) {
     }
   });
 </script>
+
 
 
 

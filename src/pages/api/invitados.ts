@@ -1,20 +1,23 @@
 import type { APIRoute } from "astro";
 import { pool } from "../../db/connection";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*", // cámbialo por tu dominio en producción si quieres restringir
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+export const OPTIONS: APIRoute = async ({ request }) => {
+  const headers = new Headers();
+  headers.set("Access-Control-Allow-Origin", "https://alo-guild-page-production.up.railway.app");
+  headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  headers.set("Access-Control-Allow-Headers", "Content-Type");
+  headers.set("Access-Control-Allow-Credentials", "true");
 
-export const OPTIONS: APIRoute = async () => {
-  return new Response(null, {
-    status: 204,
-    headers: corsHeaders,
-  });
+  return new Response(null, { headers, status: 204 });
 };
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
+  const headers = new Headers();
+  headers.set("Access-Control-Allow-Origin", "https://alo-guild-page-production.up.railway.app");
+  headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  headers.set("Access-Control-Allow-Headers", "Content-Type");
+  headers.set("Access-Control-Allow-Credentials", "true");
+
   try {
     const formData = await request.formData();
 
@@ -24,17 +27,17 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     // 🔐 Validación estricta
     if (!nickInvitado || !nickInvitador || !rolDiscord) {
-      return new Response("Campos incompletos", { status: 400, headers: corsHeaders });
+      return new Response("Campos incompletos", { status: 400, headers });
     }
 
     if (nickInvitado.length > 30 || nickInvitador.length > 30 || rolDiscord.length > 50) {
-      return new Response("Longitud inválida", { status: 400, headers: corsHeaders });
+      return new Response("Longitud inválida", { status: 400, headers });
     }
 
     const regex = /^[a-zA-Z0-9_\- ]+$/;
 
     if (!regex.test(nickInvitado) || !regex.test(nickInvitador)) {
-      return new Response("Formato inválido", { status: 400, headers: corsHeaders });
+      return new Response("Formato inválido", { status: 400, headers });
     }
 
     // 🔒 Verificar duplicado
@@ -44,7 +47,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     );
 
     if (existing.length > 0) {
-      return new Response("El invitado ya existe", { status: 409, headers: corsHeaders });
+      return new Response("El invitado ya existe", { status: 409, headers });
     }
 
     // 🔎 Contar invitaciones actuales del invitador
@@ -65,7 +68,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     } else {
       return new Response(
         JSON.stringify({ error: "Rol inválido" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 400, headers }
       );
     }
 
@@ -75,7 +78,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         JSON.stringify({
           error: `Este invitador ya alcanzó el límite de ${limite} invitaciones`
         }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 403, headers }
       );
     }
 
@@ -89,11 +92,11 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers,
     });
 
   } catch (error) {
     console.error(error);
-    return new Response("Error interno", { status: 500, headers: corsHeaders });
+    return new Response("Error interno", { status: 500, headers });
   }
 };

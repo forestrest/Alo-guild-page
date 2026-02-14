@@ -9,9 +9,9 @@
     "@types/bcrypt": "^6.0.0"
   },
     "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "start": "node index.astro"
+      "dev" : "astro dev --host",
+      "build": "astro build --verbose",
+      "start": "node ./dist/server/entry.msj --port 4321 --host 0.0.0.0",
+      "preview": "astro preview"
   }
 }

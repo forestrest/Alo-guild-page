@@ -11,6 +11,7 @@ const [rows]: any = await pool.execute(`
     nick_invitado,
     nick_invitador,
     rol,
+    ip_registro,
     created_at,
     validar_invitacion
   FROM Invitados
@@ -33,6 +34,7 @@ if (!admin) {
           <th>Invitado</th>
           <th>Invitador</th>
           <th>Rol</th>
+          <th>IP registrada</th>
           <th>Fecha</th>
         </tr>
       </thead>
@@ -44,6 +46,7 @@ if (!admin) {
             <td>{row.nick_invitado}</td>
             <td>{row.nick_invitador}</td>
             <td>{row.rol}</td>
+            <td>{row.ip_registro}</td>
             <td>{new Date(row.created_at).toLocaleDateString()}</td>
           </tr>
         ))}

@@ -1,6 +1,19 @@
 import type { APIRoute } from "astro";
 import { pool } from "../../db/connection";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*", // o especifica tu dominio en vez de "*"
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+};
+
 export const POST: APIRoute = async ({ request }) => {
   try {
     const formData = await request.formData();
@@ -12,14 +25,14 @@ export const POST: APIRoute = async ({ request }) => {
     if (!nickAlbion || !razon) {
       return new Response(
         JSON.stringify({ error: "Campos obligatorios incompletos" }),
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
     if (razon.length > 250) {
       return new Response(
         JSON.stringify({ error: "La razón no puede superar 250 caracteres" }),
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -32,14 +45,14 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(
       JSON.stringify({ success: true }),
-      { status: 200 }
+      { status: 200, headers: corsHeaders }
     );
 
   } catch (error) {
     console.error(error);
     return new Response(
       JSON.stringify({ error: "Error interno" }),
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 };

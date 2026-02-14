@@ -1,0 +1,27 @@
+---
+import Layout from "../layouts/Layout.astro";
+const admin = Astro.cookies.get("admin");
+
+if (!admin) {
+  return Astro.redirect("/");
+}
+---
+
+<Layout title="Dashboard">
+  <div class="dashboard-container">
+    <h1>Bienvenido al Panel, Pelón</h1>
+  </div>
+
+</Layout>
+
+
+<style>
+  .dashboard-container {
+    min-height: 100vh;
+    background-image: url("/images/alopecia.webp");
+    background-position: relative;
+    background-size: 1080px;
+    padding: 4rem;
+    color: #e5d6a8;
+  }
+</style>

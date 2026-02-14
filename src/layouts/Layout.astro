@@ -1,0 +1,108 @@
+---
+const admin = Astro.cookies.get("admin");
+
+if (!admin) {
+  return Astro.redirect("/");
+}
+---
+
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel del Gremio</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: #e5d6a8;
+      font-family: "Georgia", serif;
+    }
+
+    header {
+      background: #1c1c1c;
+      padding: 15px;
+      border-bottom: 2px solid #6e4f1e;
+    }
+
+    nav a {
+      color: #e5d6a8;
+      margin-right: 20px;
+      text-decoration: none;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    .card {
+      background: #1c1c1c;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #6e4f1e;
+      border-radius: 8px;
+    }
+
+    button {
+      background: #b68b2c;
+      border: none;
+      padding: 8px 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #d4a73a;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #6e4f1e;
+    }
+
+    th {
+      text-align: left;
+      color: #d4a73a;
+    }
+
+    input, select {
+      padding: 6px;
+      background: #111;
+      border: 1px solid #6e4f1e;
+      color: #e5d6a8;
+    }
+  </style>
+</head>
+
+<body>
+  {admin && (
+    <header>
+      <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/invitados">Invitados</a>
+        <a href="/listas">Listas</a>
+        <a href="/auditoria">Auditoría</a>
+        <a href="/api/logout" id="logoutBtn">Cerrar sesión</a>
+      </nav>
+    </header>
+  )}
+
+  <div class="container">
+    <slot />
+  </div>
+</body>
+</html>
+
+<script>
+  const btn = document.getElementById("logoutBtn");
+
+  btn?.addEventListener("click", async () => {
+    await fetch("/api/logout", { method: "POST" });
+    window.location.href = "/";
+  });
+</script>
+

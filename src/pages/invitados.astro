@@ -1,0 +1,105 @@
+---
+import Layout from "../layouts/Layout.astro";
+const admin = Astro.cookies.get("admin");
+
+import { pool } from "../db/connection";
+
+// 🔎 Query segura
+const [rows]: any = await pool.execute(`
+  SELECT 
+    id,
+    nick_invitado,
+    nick_invitador,
+    rol,
+    created_at,
+    validar_invitacion
+  FROM Invitados
+  ORDER BY created_at DESC
+`);
+
+if (!admin) {
+  return Astro.redirect("/");
+}
+---
+
+<Layout title="Invitados">
+  <div class="dashboard-container">  
+    <h1 class="titulo">Invitados Registrados</h1>
+      <div class="tabla-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Invitado</th>
+          <th>Invitador</th>
+          <th>Rol</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {rows.map((row) => (
+          <tr>
+            <td>{row.id}</td>
+            <td>{row.nick_invitado}</td>
+            <td>{row.nick_invitador}</td>
+            <td>{row.rol}</td>
+            <td>{new Date(row.created_at).toLocaleDateString()}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+</Layout>
+
+<style>
+  .titulo {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #d4af37;
+    font-family: "Cinzel", serif;
+  }
+
+  .tabla-container {
+    width: 95%;
+    margin: auto;
+    background: #1a120c;
+    border: 2px solid #b8860b;
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+    padding: 20px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #fff;
+  }
+
+  th {
+    background: #2b1d12;
+    color: #d4af37;
+    padding: 12px;
+    border-bottom: 2px solid #b8860b;
+    text-align: left;
+  }
+
+  td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(184, 134, 11, 0.3);
+  }
+
+  tr:hover {
+    background: rgba(212, 175, 55, 0.08);
+  }
+
+  .dashboard-container {
+    min-height: 100vh;
+    background-image: url("/images/alopecia.webp");
+    background-position: relative;
+    background-size: 1080px;
+    padding: 4rem;
+    color: #e5d6a8;
+  }
+</style>

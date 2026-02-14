@@ -1,0 +1,51 @@
+---
+import MainLayout from "../layouts/Layout.astro";
+import { pool } from "../db/connection";
+import type { RowDataPacket } from "mysql2";
+
+interface AuditLog extends RowDataPacket {
+  id: number;
+  admin_id: number;
+  username: string;
+  accion: string;
+  tabla_afectada: string;
+  detalles: string;
+  created_at: string;
+}
+
+const [logs] = await pool.query<AuditLog[]>(`
+  SELECT a.*, ad.username 
+  FROM auditoria a
+  JOIN admins ad ON ad.id = a.admin_id
+  ORDER BY a.created_at DESC
+`);
+---
+
+<MainLayout>
+  <div class="card">
+    <h2>Registro de Auditoría</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Admin</th>
+          <th>Acción</th>
+          <th>Tabla</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        {logs.map((log) => (
+          <tr>
+            <td>{log.created_at}</td>
+            <td>{log.username}</td>
+            <td>{log.accion}</td>
+            <td>{log.tabla_afectada}</td>
+            <td>{log.detalles}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</MainLayout>

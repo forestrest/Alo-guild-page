@@ -1,0 +1,247 @@
+---
+import Layout from "../layouts/Layout.astro";
+const admin = Astro.cookies.get("admin");
+
+import { pool } from "../db/connection";
+
+// 🔎 Query segura
+const [rows]: any = await pool.execute(`
+  SELECT 
+    id,
+    nick_albion,
+    nick_discord,
+    razon,
+    created_at
+  FROM blacklist
+  ORDER BY created_at DESC
+`);
+
+if (!admin) {
+  return Astro.redirect("/");
+}
+---
+
+<Layout title="Listar">
+    <button id="abrirModal" class="btn-medieval">
+  Añadir a Blacklist
+</button>
+
+<div id="modalBlacklist" class="modal">
+  <div class="modal-content">
+    <h2>Registro en Blacklist</h2>
+
+    <form id="blacklistForm">
+      <input type="text" name="nickAlbion" placeholder="Nick Albion" required maxlength="30" />
+      <input type="text" name="nickDiscord" placeholder="Nick Discord (Opcional)" maxlength="30" />
+      <input type="text" name="razon" placeholder="Razón" required maxlength="500" />
+
+      <button type="submit" class="btn-registrar">Registrar</button>
+      <button type="button" id="cerrarModal" class="btn-cancel">Cancelar</button>
+    </form>
+
+    <div id="mensajeBlacklist"></div>
+  </div>
+</div>
+
+  <div class="dashboard-container">
+    <h1 class="titulo">Blacklist Registrados</h1>
+      <div class="tabla-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nick en Albion</th>
+          <th>Nick en Discord</th>
+          <th>Razón</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {rows.map((row) => (
+          <tr>
+            <td>{row.id}</td>
+            <td>{row.nick_albion}</td>
+            <td>{row.nick_discord}</td>
+            <td>{row.razon}</td>
+            <td>{new Date(row.created_at).toLocaleDateString()}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Layout>
+
+
+<style>
+  .titulo {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #d4af37;
+    font-family: "Cinzel", serif;
+  }
+
+  .tabla-container {
+    width: 95%;
+    margin: auto;
+    background: #1a120c;
+    border: 2px solid #b8860b;
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+    padding: 20px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #fff;
+  }
+
+  th {
+    background: #2b1d12;
+    color: #d4af37;
+    padding: 12px;
+    border-bottom: 2px solid #b8860b;
+    text-align: left;
+  }
+
+  td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(184, 134, 11, 0.3);
+  }
+
+  tr:hover {
+    background: rgba(212, 175, 55, 0.08);
+  }
+
+  .dashboard-container {
+    min-height: 100vh;
+    background-image: url("/images/alopecia.webp");
+    background-position: relative;
+    background-size: 1080px;
+    padding: 4rem;
+    color: #e5d6a8;
+  }
+
+  /*CSS Modal*/
+  .btn-medieval {
+  padding: 10px 18px;
+  background: linear-gradient(145deg, #b8860b, #8b6508);
+  border: none;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #1a120c;
+  border: 2px solid #b8860b;
+  padding: 30px;
+  width: 400px;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+  color: #d4af37;
+  font-family: "Cinzel", serif;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: #2b1d12;
+  border: 1px solid #b8860b;
+  color: white;
+}
+
+.modal-content input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+.btn-cancel {
+  margin-top: 5px;
+  background: #444;
+  color: white;
+}
+
+/* BOTÓN REGISTRAR */
+.btn-registrar {
+  padding: 10px 20px;
+  background: linear-gradient(145deg, #b8860b, #8b6508);
+  border: none;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-registrar:hover {
+  background: linear-gradient(145deg, #ffd700, #b8860b);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+}
+
+/* BOTÓN CANCELAR */
+.btn-cancel {
+  padding: 10px 20px;
+  background: #3a2a1a;
+  border: 1px solid #b8860b;
+  color: #d4af37;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background: #2b1d12;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+}
+
+
+</style>
+
+<script>
+  const modal = document.getElementById("modalBlacklist");
+  const abrir = document.getElementById("abrirModal");
+  const cerrar = document.getElementById("cerrarModal");
+  const form = document.getElementById("blacklistForm");
+  const mensaje = document.getElementById("mensajeBlacklist");
+
+  abrir.onclick = () => modal.style.display = "flex";
+  cerrar.onclick = () => modal.style.display = "none";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    const res = await fetch("/api/blacklist", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      mensaje.textContent = "Jugador añadido a Blacklist ⚔️";
+      mensaje.style.color = "#7CFC00";
+      form.reset();
+        setTimeout(() => {
+            cerrar.onclick = () => modal.style.display = "none";
+            window.location.reload();
+        }, 1500);
+    } else {
+      mensaje.textContent = data.error || "Error";
+      mensaje.style.color = "#ff4d4d";
+    }
+  });
+</script>

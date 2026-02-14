@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@astrojs/node": "^9.5.3",
+    "bcrypt": "^6.0.0",
+    "express-session": "^1.19.0",
+    "mysql2": "^3.17.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0"
+  },
+    "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  }
+}

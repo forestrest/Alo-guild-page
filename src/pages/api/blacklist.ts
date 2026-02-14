@@ -3,7 +3,7 @@ import { pool } from "../../db/connection";
 
 export const OPTIONS: APIRoute = async () => {
   const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", "https://alo-guild-page-production.up.railway.app");
+  headers.set("Access-Control-Allow-Origin", "*");
   headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   headers.set("Access-Control-Allow-Headers", "Content-Type");
   headers.set("Access-Control-Allow-Credentials", "true");
@@ -13,7 +13,7 @@ export const OPTIONS: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
   const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", "https://alo-guild-page-production.up.railway.app");
+  headers.set("Access-Control-Allow-Origin", "*");
   headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   headers.set("Access-Control-Allow-Headers", "Content-Type");
   headers.set("Access-Control-Allow-Credentials", "true");

@@ -4,8 +4,8 @@ const admin = Astro.cookies.get("admin");
 
 import { pool } from "../db/connection";
 
-// 🔎 Query segura
-const [rows]: any = await pool.execute(`
+// 🔎 Query segura para listar blacklist
+const [rows]: any[] = await pool.execute(`
   SELECT 
     id,
     nick_albion,
@@ -16,6 +16,7 @@ const [rows]: any = await pool.execute(`
   ORDER BY created_at DESC
 `);
 
+// 🔒 Redirigir si no hay admin
 if (!admin) {
   return Astro.redirect("/");
 }
@@ -56,7 +57,7 @@ if (!admin) {
             <th>Fecha</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tablaBlacklist">
           {rows.map((row) => (
             <tr>
               <td>{row.id}</td>
@@ -78,38 +79,59 @@ if (!admin) {
   const cerrar = document.getElementById("cerrarModal");
   const form = document.getElementById("blacklistForm");
   const mensaje = document.getElementById("mensajeBlacklist");
+  const tabla = document.getElementById("tablaBlacklist");
 
   abrir.onclick = () => modal.style.display = "flex";
   cerrar.onclick = () => modal.style.display = "none";
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    mensaje.textContent = "";
+    form.querySelector("button[type=submit]").disabled = true;
 
     const formData = new FormData(form);
 
-    // 🔗 URL absoluta de tu API en Railway
-    const res = await fetch("https://alo-guild-page-production.up.railway.app/api/blacklist", {
-      method: "POST",
-      body: formData,
-      credentials: "include" // si necesitas cookies/sesiones
-    });
+    try {
+      // 🔗 Petición al proxy server-side en Astro
+      const res = await fetch("/api/proxyBlacklist", {
+        method: "POST",
+        body: formData
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      mensaje.textContent = "Jugador añadido a Blacklist ⚔️";
-      mensaje.style.color = "#7CFC00";
-      form.reset();
-      setTimeout(() => {
-        modal.style.display = "none";
-        window.location.reload();
-      }, 1500);
-    } else {
-      mensaje.textContent = data.error || "Error";
+      if (res.ok) {
+        mensaje.textContent = "Jugador añadido a Blacklist ⚔️";
+        mensaje.style.color = "#7CFC00";
+        form.reset();
+
+        // Agregar fila nueva dinámicamente
+        const nuevaFila = document.createElement("tr");
+        nuevaFila.innerHTML = `
+          <td>${data.id}</td>
+          <td>${data.nick_albion}</td>
+          <td>${data.nick_discord || ""}</td>
+          <td>${data.razon}</td>
+          <td>${new Date(data.created_at).toLocaleDateString()}</td>
+        `;
+        tabla.prepend(nuevaFila);
+
+        setTimeout(() => modal.style.display = "none", 1500);
+      } else {
+        mensaje.textContent = data.error || "Error";
+        mensaje.style.color = "#ff4d4d";
+      }
+
+    } catch (err) {
+      mensaje.textContent = "Error de conexión ⚠️";
       mensaje.style.color = "#ff4d4d";
+      console.error(err);
+    } finally {
+      form.querySelector("button[type=submit]").disabled = false;
     }
   });
 </script>
+
 
 
 <style>

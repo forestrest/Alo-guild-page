@@ -3,6 +3,11 @@ import { pool } from "../../db/connection";
 import bcrypt from "bcrypt";
 
 export const POST: APIRoute = async ({ request, cookies }) => {
+  const headers = new Headers();
+  headers.set("Access-Control-Allow-Origin", "https://alo-guild-page-production.up.railway.app");
+  headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  headers.set("Access-Control-Allow-Headers", "Content-Type");
+
   const data = await request.json();
   const { username, password } = data;
 

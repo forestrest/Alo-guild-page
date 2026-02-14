@@ -22,55 +22,94 @@ if (!admin) {
 ---
 
 <Layout title="Listar">
-    <button id="abrirModal" class="btn-medieval">
-  Añadir a Blacklist
-</button>
+  <button id="abrirModal" class="btn-medieval">
+    Añadir a Blacklist
+  </button>
 
-<div id="modalBlacklist" class="modal">
-  <div class="modal-content">
-    <h2>Registro en Blacklist</h2>
+  <div id="modalBlacklist" class="modal">
+    <div class="modal-content">
+      <h2>Registro en Blacklist</h2>
 
-    <form id="blacklistForm">
-      <input type="text" name="nickAlbion" placeholder="Nick Albion" required maxlength="30" />
-      <input type="text" name="nickDiscord" placeholder="Nick Discord (Opcional)" maxlength="30" />
-      <input type="text" name="razon" placeholder="Razón" required maxlength="500" />
+      <form id="blacklistForm">
+        <input type="text" name="nickAlbion" placeholder="Nick Albion" required maxlength="30" />
+        <input type="text" name="nickDiscord" placeholder="Nick Discord (Opcional)" maxlength="30" />
+        <input type="text" name="razon" placeholder="Razón" required maxlength="500" />
 
-      <button type="submit" class="btn-registrar">Registrar</button>
-      <button type="button" id="cerrarModal" class="btn-cancel">Cancelar</button>
-    </form>
+        <button type="submit" class="btn-registrar">Registrar</button>
+        <button type="button" id="cerrarModal" class="btn-cancel">Cancelar</button>
+      </form>
 
-    <div id="mensajeBlacklist"></div>
+      <div id="mensajeBlacklist"></div>
+    </div>
   </div>
-</div>
 
   <div class="dashboard-container">
     <h1 class="titulo">Blacklist Registrados</h1>
-      <div class="tabla-container">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nick en Albion</th>
-          <th>Nick en Discord</th>
-          <th>Razón</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {rows.map((row) => (
+    <div class="tabla-container">
+      <table>
+        <thead>
           <tr>
-            <td>{row.id}</td>
-            <td>{row.nick_albion}</td>
-            <td>{row.nick_discord}</td>
-            <td>{row.razon}</td>
-            <td>{new Date(row.created_at).toLocaleDateString()}</td>
+            <th>ID</th>
+            <th>Nick en Albion</th>
+            <th>Nick en Discord</th>
+            <th>Razón</th>
+            <th>Fecha</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr>
+              <td>{row.id}</td>
+              <td>{row.nick_albion}</td>
+              <td>{row.nick_discord}</td>
+              <td>{row.razon}</td>
+              <td>{new Date(row.created_at).toLocaleDateString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   </div>
 </Layout>
+
+<script>
+  const modal = document.getElementById("modalBlacklist");
+  const abrir = document.getElementById("abrirModal");
+  const cerrar = document.getElementById("cerrarModal");
+  const form = document.getElementById("blacklistForm");
+  const mensaje = document.getElementById("mensajeBlacklist");
+
+  abrir.onclick = () => modal.style.display = "flex";
+  cerrar.onclick = () => modal.style.display = "none";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    // 🔗 URL absoluta de tu API en Railway
+    const res = await fetch("https://alo-guild-page-production.up.railway.app/api/blacklist", {
+      method: "POST",
+      body: formData,
+      credentials: "include" // si necesitas cookies/sesiones
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      mensaje.textContent = "Jugador añadido a Blacklist ⚔️";
+      mensaje.style.color = "#7CFC00";
+      form.reset();
+      setTimeout(() => {
+        modal.style.display = "none";
+        window.location.reload();
+      }, 1500);
+    } else {
+      mensaje.textContent = data.error || "Error";
+      mensaje.style.color = "#ff4d4d";
+    }
+  });
+</script>
 
 
 <style>
@@ -208,40 +247,3 @@ if (!admin) {
 
 
 </style>
-
-<script>
-  const modal = document.getElementById("modalBlacklist");
-  const abrir = document.getElementById("abrirModal");
-  const cerrar = document.getElementById("cerrarModal");
-  const form = document.getElementById("blacklistForm");
-  const mensaje = document.getElementById("mensajeBlacklist");
-
-  abrir.onclick = () => modal.style.display = "flex";
-  cerrar.onclick = () => modal.style.display = "none";
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(form);
-
-    const res = await fetch("/api/blacklist", {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      mensaje.textContent = "Jugador añadido a Blacklist ⚔️";
-      mensaje.style.color = "#7CFC00";
-      form.reset();
-        setTimeout(() => {
-            cerrar.onclick = () => modal.style.display = "none";
-            window.location.reload();
-        }, 1500);
-    } else {
-      mensaje.textContent = data.error || "Error";
-      mensaje.style.color = "#ff4d4d";
-    }
-  });
-</script>

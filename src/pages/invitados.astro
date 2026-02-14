@@ -14,7 +14,7 @@ const [rows]: any = await pool.execute(`
     ip_registro,
     created_at,
     validar_invitacion
-  FROM Invitados
+  FROM invitados
   ORDER BY created_at DESC
 `);
 

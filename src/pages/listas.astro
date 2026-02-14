@@ -85,7 +85,7 @@ if (!admin) {
     const jsonData = Object.fromEntries(formData.entries());
 
     try {
-      const res = await fetch("https://alo-guild-page-production.up.railway.app/api/blacklist", {
+      const res = await fetch("/api/blacklist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(jsonData)

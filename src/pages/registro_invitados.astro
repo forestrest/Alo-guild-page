@@ -138,10 +138,11 @@ const success = Astro.url.searchParams.get("success");
           maxlength="30"
           required 
         />
-        <select name="rolDiscord" id="rolDiscord">
-            <option value="">Rol en Discord de Alopecia</option>
-            <option value="GREMIO">GREMIO</option>
-            <option value="INVITADO">INVITADO</option>
+
+        <select name="rolDiscord" id="rolDiscord" required>
+          <option value="">Rol en Discord de Alopecia</option>
+          <option value="GREMIO">GREMIO</option>
+          <option value="INVITADO">INVITADO</option>
         </select>
 
         <button type="submit">Registrar Guerrero</button>
@@ -160,7 +161,6 @@ const success = Astro.url.searchParams.get("success");
       <div class="footer-text">
         Iniciar sesión <a href="/">Click Here</a>
       </div>
-
     </div>
   </body>
 </html>
@@ -174,9 +174,11 @@ const success = Astro.url.searchParams.get("success");
     const formData = new FormData(form);
 
     try {
-      const response = await fetch("/api/invitados", {
+      // 🔗 URL absoluta de tu API en Railway
+      const response = await fetch("https://alo-guild-page-production.up.railway.app/api/invitados", {
         method: "POST",
-        body: formData
+        body: formData,
+        credentials: "include" // si necesitas cookies/sesiones
       });
 
       const data = await response.json();
@@ -211,10 +213,9 @@ const success = Astro.url.searchParams.get("success");
     } else {
       mensaje.style.color = "#ff4d4d";
     }
-
     /*setTimeout(() => {
         window.location.reload();
     }, 1500);*/
-
   }
 </script>
+

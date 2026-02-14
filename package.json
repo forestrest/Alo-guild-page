@@ -11,7 +11,7 @@
     "scripts": {
       "dev" : "astro dev --host",
       "build": "astro build --verbose",
-      "start": "node ./dist/server/entry.msj --port 4321 --host 0.0.0.0",
+      "start": "node ./dist/server/entry.mjs --port 4321 --host 0.0.0.0",
       "preview": "astro preview"
   }
 }

@@ -12,6 +12,6 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "start": "node index.js"
+    "start": "node index.astro"
   }
 }

@@ -11,6 +11,7 @@
     "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "start": "node index.js"
   }
 }

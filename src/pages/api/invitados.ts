@@ -42,7 +42,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     // 🔒 Verificar duplicado
     const [existing]: any = await pool.execute(
-      "SELECT id FROM Invitados WHERE nick_invitado = ?",
+      "SELECT id FROM invitados WHERE nick_invitado = ?",
       [nickInvitado]
     );
     if (existing.length > 0) {
@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     // 🔎 Contar invitaciones actuales del invitador
     const [rows]: any = await pool.execute(
-      "SELECT COUNT(*) as total FROM Invitados WHERE validar_invitacion = 1 and nick_invitador = ?",
+      "SELECT COUNT(*) as total FROM invitados WHERE validar_invitacion = 1 and nick_invitador = ?",
       [nickInvitador]
     );
     const totalInvitaciones = rows[0].total;
@@ -76,7 +76,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     // 🔒 Insertar con prepared statement
     await pool.execute(
-      `INSERT INTO Invitados
+      `INSERT INTO invitados
        (nick_invitado, nick_invitador, rol, ip_registro, created_at)
        VALUES (?, ?, ?, ?, NOW())`,
       [nickInvitado, nickInvitador, rolDiscord, clientAddress]

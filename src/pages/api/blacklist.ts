@@ -40,7 +40,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     await pool.execute(
-      `INSERT INTO Blacklist 
+      `INSERT INTO blacklist 
        (nick_albion, nick_discord, razon, created_at)
        VALUES (?, ?, ?, NOW())`,
       [nickAlbion, nickDiscord || null, razon]
